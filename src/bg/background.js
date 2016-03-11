@@ -59,4 +59,9 @@ function checkMessages() {
       });
     });
   });
+
+  if (!tabFound) {
+    chrome.browserAction.setBadgeText({text: ""});
+    chrome.browserAction.setIcon({path: closedTabBadge});
+  }
 }
