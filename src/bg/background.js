@@ -1,6 +1,6 @@
 var chat = "http://192.168.47.60:8065";
 var pingDuration = 2000;
-var privateMessageBadge = "icons/icon16.png";
+var privateMessageBadge = "icons/icon96.png";
 var closedTabBadge = "icons/iconred16.png";
 var groupOrChannelBadge = "icons/iconblue36.png";
 
