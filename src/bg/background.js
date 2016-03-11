@@ -5,20 +5,24 @@ var closedTabBadge = "icons/iconred16.png";
 var groupOrChannelBadge = "icons/iconblue36.png";
 
 chrome.browserAction.onClicked.addListener(function(icon) {
-  goToChat()
+  goToChat();
 });
-/*chrome.tabs.update(tabId, {selected: true});*/
-function getChatTab() {
-
-}
 
 function goToChat() {
-  chrome.tabs.create({
+  chrome.tabs.getAllInWindow(null, function(tabs) {
+    var found = false;
+    for (var i = 0; i < tabs.length; i++) {
+      if (tabs[i].url.indexOf(chat) > -1) {
+	found = true;
+    	chrome.tabs.update(tabs[i].id, {selected: true});
+      }
+    }
+    if(!found)
+	chrome.tabs.create({
     url: chat
   });
+  });
 }
-
-
 
 function ping() {
   checkMessages()
@@ -27,6 +31,9 @@ function ping() {
 setTimeout(ping, pingDuration);
 
 function checkMessages() {
+ chrome.browserAction.setBadgeText({
+            text: ""
+          });
   var tabFound = false;
   chrome.tabs.getAllInWindow(null, function(tabs) {
     for (var i = 0; i < tabs.length; i++) {
