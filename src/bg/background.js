@@ -25,17 +25,18 @@ chrome.browserAction.onClicked.addListener(goToChat);
 function checkMessages() {
   chrome.windows.getAll({populate: true}, function(windows) {
     var connected = false;
-    var state;
 
     windows.forEach(function(a_window) {
       a_window.tabs.forEach(function(tab) {
         state = parseTabName(tab);
-        connected = true;
+        if (state.success) {
+          connected = true;
+          updateState(state);
+        }
       });
     });
 
     if (!connected) updateState();
-    else updateState(state);
   });
 }
 setInterval(checkMessages, pingDuration);
@@ -44,8 +45,10 @@ setInterval(checkMessages, pingDuration);
 function parseTabName(tab) {
   var groupMessage = false;
   var numberUnread = 0;
+  var success = false;
 
   if (tab.url.indexOf(chat) > -1) {
+    success = true;
     if (tab.title.indexOf("*") > -1) {
       groupMessage = true;
     }
@@ -56,11 +59,18 @@ function parseTabName(tab) {
     }
   }
 
-  return {"groupMessage": groupMessage, "numberUnread": numberUnread};
+  return {"groupMessage": groupMessage, "numberUnread": numberUnread,
+          "success": success};
 }
 
 
 function updateState(state) {
+  if (!state) {
+    chrome.browserAction.setIcon({path: closedTabBadge});
+    chrome.browserAction.setBadgeText({text: ""});
+    return;
+  }
+
   var badge;
   var groupMessage = state["groupMessage"];
   var numberUnread = state["numberUnread"];
@@ -68,8 +78,6 @@ function updateState(state) {
   // Set the badge icon.
   if (groupMessage)
     badge = groupOrChannelBadge;
-  else if (groupMessage === undefined && numberUnread === undefined)
-    badge = closedTabBadge;
   else
     badge = privateMessageBadge;
 
@@ -80,5 +88,5 @@ function updateState(state) {
   if (numberUnread > 0)
     bubbleText = "" + numberUnread;
 
-  chrome.browserAction.setBadgeText({ text: bubbleText});
+  chrome.browserAction.setBadgeText({text: bubbleText});
 }
