@@ -35,44 +35,42 @@ function checkMessages() {
             text: ""
           });
   var tabFound = false;
-  chrome.tabs.getAllInWindow(null, function(tabs) {
-    for (var i = 0; i < tabs.length; i++) {
-      if (tabs[i].url.indexOf(chat) > -1) {
-        tabFound = true;
-        chrome.browserAction.setIcon({
-          path: privateMessageBadge
-        });
-        var title = tabs[i].title;
-        if (title.indexOf("*") > -1) {
+  chrome.windows.getAll({populate:true}, function(windows){
+    windows.forEach(function(window){
+      window.tabs.forEach(function(tab){
+
+
+        if (tab.url.indexOf(chat) > -1) {
+          tabFound = true;
           chrome.browserAction.setIcon({
-            path: groupOrChannelBadge
+            path: privateMessageBadge
           });
-          chrome.browserAction.setBadgeText({
-            text: ""
-          });
+          var title = tab.title;
+          if (title.indexOf("*") > -1) {
+            chrome.browserAction.setIcon({
+              path: groupOrChannelBadge
+            });
+            chrome.browserAction.setBadgeText({
+              text: ""
+            });
+          }
+          if (title.indexOf("(") > -1) {
+            chrome.browserAction.setBadgeText({
+              text: title
+            });
+            var rgx = /\(([^)]+)\)/;
+            var matcher = title.match(rgx);
+            var privateMsgCount = matcher && matcher[1];
+            chrome.browserAction.setBadgeText({
+              text: privateMsgCount
+            });
+          }
         }
-        if (title.indexOf("(") > -1) {
-          chrome.browserAction.setBadgeText({
-            text: title
-          });
-          var rgx = /\(([^)]+)\)/;
-          var matcher = title.match(rgx);
-          var privateMsgCount = matcher && matcher[1];
-          chrome.browserAction.setBadgeText({
-            text: privateMsgCount
-          });
-        }
-      }
-    }
 
-    if (!tabFound) {
-      chrome.browserAction.setBadgeText({
-        text: ""
+
+
+
       });
-      chrome.browserAction.setIcon({
-        path: closedTabBadge
-      });
-    }
+    });
   });
-
 }
