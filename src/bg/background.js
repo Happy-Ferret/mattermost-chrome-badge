@@ -18,28 +18,18 @@ function goToChat() {
       }
     }
     if(!found)
-	chrome.tabs.create({
-    url: chat
-  });
+      chrome.tabs.create({url: chat});
   });
 }
 
-function ping() {
-  checkMessages()
-  setTimeout(ping, pingDuration);
-}
-setTimeout(ping, pingDuration);
+setInterval(checkMessages, pingDuration);
 
 function checkMessages() {
- chrome.browserAction.setBadgeText({
-            text: ""
-          });
+ chrome.browserAction.setBadgeText({text: ""});
   var tabFound = false;
-  chrome.windows.getAll({populate:true}, function(windows){
+  chrome.windows.getAll({populate: true}, function(windows){
     windows.forEach(function(window){
       window.tabs.forEach(function(tab){
-
-
         if (tab.url.indexOf(chat) > -1) {
           tabFound = true;
           chrome.browserAction.setIcon({
@@ -66,10 +56,6 @@ function checkMessages() {
             });
           }
         }
-
-
-
-
       });
     });
   });
