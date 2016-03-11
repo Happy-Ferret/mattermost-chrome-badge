@@ -1,67 +1,84 @@
+
 var chat = "http://192.168.47.60:8065";
 var pingDuration = 2000;
 var privateMessageBadge = "icons/icon96.png";
-var closedTabBadge = "icons/iconred16.png";
+var closedTabBadge = "icons/iconred96.png";
 var groupOrChannelBadge = "icons/iconblue36.png";
 
-chrome.browserAction.onClicked.addListener(function(icon) {
-  goToChat();
-});
 
 function goToChat() {
   chrome.tabs.getAllInWindow(null, function(tabs) {
     var found = false;
     for (var i = 0; i < tabs.length; i++) {
       if (tabs[i].url.indexOf(chat) > -1) {
-	found = true;
-    	chrome.tabs.update(tabs[i].id, {selected: true});
+        found = true;
+        chrome.tabs.update(tabs[i].id, {selected: true});
       }
     }
     if(!found)
       chrome.tabs.create({url: chat});
   });
 }
+chrome.browserAction.onClicked.addListener(goToChat);
 
-setInterval(checkMessages, pingDuration);
 
 function checkMessages() {
- chrome.browserAction.setBadgeText({text: ""});
-  var tabFound = false;
-  chrome.windows.getAll({populate: true}, function(windows){
-    windows.forEach(function(window){
-      window.tabs.forEach(function(tab){
-        if (tab.url.indexOf(chat) > -1) {
-          tabFound = true;
-          chrome.browserAction.setIcon({
-            path: privateMessageBadge
-          });
-          var title = tab.title;
-          if (title.indexOf("*") > -1) {
-            chrome.browserAction.setIcon({
-              path: groupOrChannelBadge
-            });
-            chrome.browserAction.setBadgeText({
-              text: ""
-            });
-          }
-          if (title.indexOf("(") > -1) {
-            chrome.browserAction.setBadgeText({
-              text: title
-            });
-            var rgx = /\(([^)]+)\)/;
-            var matcher = title.match(rgx);
-            var privateMsgCount = matcher && matcher[1];
-            chrome.browserAction.setBadgeText({
-              text: privateMsgCount
-            });
-          }
-        }
+  chrome.windows.getAll({populate: true}, function(windows) {
+    var connected = false;
+    var state;
+
+    windows.forEach(function(a_window) {
+      a_window.tabs.forEach(function(tab) {
+        state = parseTabName(tab);
+        connected = true;
       });
     });
-  });
 
-  if (!tabFound) {
-    chrome.browserAction.setBadgeText({text: ""});
-    chrome.browserAction.setIcon({path: closedTabBadge});
+    if (!connected) updateState();
+    else updateState(state);
+  });
+}
+setInterval(checkMessages, pingDuration);
+
+
+function parseTabName(tab) {
+  var groupMessage = false;
+  var numberUnread = 0;
+
+  if (tab.url.indexOf(chat) > -1) {
+    if (tab.title.indexOf("*") > -1) {
+      groupMessage = true;
+    }
+    if (tab.title.indexOf("(") > -1) {
+      var rgx = /\(([^)]+)\)/;
+      var matcher = tab.title.match(rgx);
+      numberUnread = matcher && matcher[1];
+    }
   }
+
+  return {"groupMessage": groupMessage, "numberUnread": numberUnread};
+}
+
+
+function updateState(state) {
+  var badge;
+  var groupMessage = state["groupMessage"];
+  var numberUnread = state["numberUnread"];
+
+  // Set the badge icon.
+  if (groupMessage)
+    badge = groupOrChannelBadge;
+  else if (groupMessage === undefined && numberUnread === undefined)
+    badge = closedTabBadge;
+  else
+    badge = privateMessageBadge;
+
+  chrome.browserAction.setIcon({path: badge});
+
+  // Set the number of unread.
+  var bubbleText = "";
+  if (numberUnread > 0)
+    bubbleText = "" + numberUnread;
+
+  chrome.browserAction.setBadgeText({ text: bubbleText});
 }
