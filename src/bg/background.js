@@ -1,7 +1,7 @@
 
 var pingDuration = 2000;
 var privateMessageBadge = "icons/icon96.png";
-var closedTabBadge = "icons/iconred96.png";
+var closedTabBadge = "icons/icongray96.png";
 var groupOrChannelBadge = "icons/iconblue36.png";
 
 var configured = false;
