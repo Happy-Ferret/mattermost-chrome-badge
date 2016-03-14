@@ -2,7 +2,7 @@
 var pingDuration = 2000;
 var privateMessageBadge = "icons/icon96.png";
 var closedTabBadge = "icons/icongray96.png";
-var groupOrChannelBadge = "icons/iconblue36.png";
+var groupOrChannelBadge = "icons/iconblue96.png";
 
 var configured = false;
 var chat;
