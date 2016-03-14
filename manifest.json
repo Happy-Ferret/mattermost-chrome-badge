@@ -20,7 +20,12 @@
     "default_icon": "icons/icon96.png",
     "default_title": "Mattermost Notifications"
   },
+  "options_ui": {
+    "page": "options.html",
+    "chrome_style": true
+  },
   "permissions": [
-    "tabs"
+    "tabs",
+    "storage"
   ]
 }

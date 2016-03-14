@@ -1,12 +1,25 @@
 
-var chat = "http://192.168.47.60:8065";
 var pingDuration = 2000;
 var privateMessageBadge = "icons/icon96.png";
 var closedTabBadge = "icons/iconred96.png";
 var groupOrChannelBadge = "icons/iconblue36.png";
 
+var configured = false;
+var chat;
+chrome.storage.local.get("chat_url", function(result) {
+  chat = result.chat_url;
+  if (chat === undefined) {
+    setNotConfiguredState();
+  } else {
+    configured = true;
+  }
+});
 
 function goToChat() {
+  if (!configured) {
+    setNotConfiguredState();
+    return;
+  }
   chrome.tabs.getAllInWindow(null, function(tabs) {
     var found = false;
     for (var i = 0; i < tabs.length; i++) {
@@ -23,6 +36,10 @@ chrome.browserAction.onClicked.addListener(goToChat);
 
 
 function checkMessages() {
+  if (!configured) {
+    setNotConfiguredState();
+    return;
+  }
   chrome.windows.getAll({populate: true}, function(windows) {
     var connected = false;
 
@@ -89,4 +106,9 @@ function updateState(state) {
     bubbleText = "" + numberUnread;
 
   chrome.browserAction.setBadgeText({text: bubbleText});
+}
+
+function setNotConfiguredState() {
+  chrome.browserAction.setIcon({path: closedTabBadge});
+  chrome.browserAction.setBadgeText({text: "?"});
 }
