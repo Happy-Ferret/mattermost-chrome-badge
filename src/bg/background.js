@@ -18,6 +18,7 @@ chrome.storage.local.get("chat_url", function(result) {
 function goToChat() {
   if (!configured) {
     setNotConfiguredState();
+    chrome.runtime.openOptionsPage()
     return;
   }
   chrome.tabs.getAllInWindow(null, function(tabs) {
