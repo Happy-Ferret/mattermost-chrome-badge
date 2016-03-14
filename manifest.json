@@ -21,7 +21,7 @@
     "default_title": "Mattermost Notifications"
   },
   "options_ui": {
-    "page": "options.html",
+    "page": "src/options/options.html",
     "chrome_style": true
   },
   "permissions": [
