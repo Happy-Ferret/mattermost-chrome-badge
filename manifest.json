@@ -1,6 +1,6 @@
 {
   "name": "mattermost-chrome-badge",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "manifest_version": 2,
   "description": "A chrome plugin to show the number of unread messages in mattermost.",
   "homepage_url": "https://github.com/dahdahm/mattermost-chrome-badge",
@@ -9,16 +9,15 @@
     "32": "icons/icon32.png",
     "96": "icons/icon96.png"
   },
-  "default_locale": "en",
   "background": {
     "scripts": [
-      "js/jquery/jquery.js","src/bg/background.js"
+      "src/bg/background.js"
     ],
     "persistent": true
   },
   "browser_action": {
     "default_icon": "icons/icon96.png",
-    "default_title": "Mattermost Notifications"
+    "default_title": "Mattermost Chrome Badge"
   },
   "options_ui": {
     "page": "src/options/options.html",
