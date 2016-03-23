@@ -4,7 +4,7 @@ A chrome badge that shows the number of unread private messages in
 [Mattermost](http://www.mattermost.org/). It also shows if there are any new
 messages in channels or private groups.
 
- [Install the extension ](https://chrome.google.com/webstore/detail/mattermost-chrome-badge/ahmlpiknebpepidendbfmflbipgbioob/related?utm_source=chrome-app-launcher-info-dialog "Download") from chrome web store.
+ [Install the extension ](https://chrome.google.com/webstore/detail/mattermost-chrome-badge/ahmlpiknebpepidendbfmflbipgbioob?utm_source=chrome-app-launcher-info-dialog "Download") from chrome web store.
 
 The badge has the following states:
 
